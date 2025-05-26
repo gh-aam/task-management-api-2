@@ -1,0 +1,17 @@
+{
+  "name": "task-management-api-2",
+  "version": "1.0.0",
+  "description": "A simple task management (RESTful) API built with Express.js and PostgreSQL.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
+  },
+  "author": "Abdullah Al Mamun",
+  "license": "MIT",
+  "dependencies": {
+    "dotenv": "^16.5.0",
+    "express": "^5.1.0",
+    "pg": "^8.16.0"
+  }
+}
