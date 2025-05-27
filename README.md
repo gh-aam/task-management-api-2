@@ -39,7 +39,7 @@ PGDATABASE=your_posgres_database_name
 PGPASSWORD=your_postgres_password
 PGPORT=5432
 ```
-Create the `tasks` table in your PostgreSQL database:
+Create the `tasks` table in your **PostgreSQL** database:
 ```bash
 CREATE TABLE tasks (
   id SERIAL PRIMARY KEY,
