@@ -25,13 +25,24 @@ pool.query('SELECT NOW()', (err, res) => {
 
 app.use(express.json());  // Middleware to parse JSON request bodies
 
+// Title field validation middleware
+const isTitlePresent = (req, res, next) => {
+  const { title } = req.body;
+  
+  if (!title) {
+    return res.status(400).json({ message: 'Title required' });
+  }
+  
+  next();
+};
+
 // GET /: Root route
 app.get('/', (req, res) => {
   res.send('Welcome to Task Management API 2!');
 });
 
 // POST /tasks: Create a new task
-app.post('/tasks', async (req, res) => {
+app.post('/tasks', isTitlePresent, async (req, res) => {
   const { title, description } = req.body;
   
   try {
@@ -45,11 +56,32 @@ app.post('/tasks', async (req, res) => {
   }
 });
 
-// GET /tasks: Get all tasks
+// GET /tasks: Get all tasks with pagination and search
 app.get('/tasks', async (req, res) => {
+  // Parse query parameters or set defaults
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 10;
+  const offset = (page - 1) * limit;
+  const search = req.query.search || '';
+  
   try {
-    const result = await pool.query(`SELECT * FROM tasks;`);
-    res.json(result.rows);
+    const query = 'SELECT * FROM tasks WHERE title ILIKE $1 OR description ILIKE $1 ORDER BY id LIMIT $2 OFFSET $3';
+    const values = [`%${search}%`, limit, offset];
+    const result = await pool.query(query, values);  // Fetch paginated tasks with search
+    
+    // Get total matched task count for metadata
+    const countQuery = 'SELECT COUNT(*) FROM tasks WHERE title ILIKE $1 OR description ILIKE $1';
+    const countResult = await pool.query(countQuery, [`%${search}%`]);
+    const totalTasks = parseInt(countResult.rows[0].count);
+    const totalPages = Math.ceil(totalTasks / limit);
+    
+    res.json({
+      page,
+      limit,
+      totalTasks,
+      totalPages,
+      tasks: result.rows
+    });
   } catch (err) {
     console.error('Error getting tasks:', err);
     res.status(500).json({ error: 'Failed to get tasks' });
@@ -75,7 +107,7 @@ app.get('/tasks/:id', async (req, res) => {
 });
 
 // PUT /tasks/:id: Update a task by ID
-app.put('/tasks/:id', async (req, res) => {
+app.put('/tasks/:id', isTitlePresent, async (req, res) => {
   const { id } = req.params;
   const { title, description, completed } = req.body;
   
