@@ -1,5 +1,5 @@
 # task-management-api-2
-A simple and robust Task Management RESTful API built with Express.js and PostgreSQL. This API allows users to create, read, update, delete, and search tasks with support for pagination and filtering.
+A simple and robust Task Management RESTful API built with **Express.js** and **PostgreSQL**. This API allows users to create, read, update, delete, and search tasks with support for pagination and filtering.
 
 ## Features
 - Create tasks
@@ -31,7 +31,7 @@ Install dependencies:
 ```bash
 npm install
 ```
-Create a `.env` file in the root directory and configure your PostgreSQL credentials:
+Create a `.env` file in the root directory and configure your **PostgreSQL** credentials:
 ```bash
 PGUSER=your_postgres_username
 PGHOST=localhost
